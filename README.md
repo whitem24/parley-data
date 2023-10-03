@@ -11,6 +11,7 @@
 <h5><strong>Básico</strong></h5>
 
 1. Para realizar importaciones en lote basado en el archivo excel proporcionado, ejecutar comando: php artisan dispatch:imports
+2. Para ejecutar los test, ejecutar comando: php artisan test
 
 Para más información consultar archivo de la carpeta /docs que se encuentra en la raiz del proyecto
 
