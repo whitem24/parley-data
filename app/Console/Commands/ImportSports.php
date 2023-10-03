@@ -50,7 +50,7 @@ class ImportSports extends Command
                 $endpoint = config('endpoints.get.sports').$slug.config('endpoints.get.lang.en-us');
                 $responseSport = Http::get($endpoint);
             
-                if (isset($responseSport)) {
+                if ($responseSport->successful()) {
                     $sport = $responseSport->json();
                     $sportNew = new Sport([
                         'apiId' => $sport['id'],

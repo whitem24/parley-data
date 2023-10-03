@@ -48,45 +48,42 @@ class ImportLeagues extends Command
     public function handle()
     {
         $leaguesSlugWithParent = SlugWithParent::getSlugWithParent('app/excel/Deportes_y_ligas_ESPN.xlsx', 4, 3);
-        $existingLeagues = League::all()->pluck('slug')->toArray();
+        $existingLeagues = League::pluck('slug')->toArray();
         $diffLeagues = array_filter($leaguesSlugWithParent, function ($row) use ($existingLeagues) {
             return !in_array($row['slug'], $existingLeagues);
         });
-        
-        if (count($diffLeagues)>0) {
+    
+        if (count($diffLeagues) > 0) {
             foreach ($diffLeagues as $slug) {
-                // Getting all the leagues endpoints
-                $endpoint = config('endpoints.get.sports').$slug['slugParent'].'/leagues/'.$slug['slug'].config('endpoints.get.lang.en-us');
+                $endpoint = config('endpoints.get.sports') . $slug['slugParent'] . '/leagues/' . $slug['slug'] . config('endpoints.get.lang.en-us');
                 $sport = Sport::where('slug', $slug['slugParent'])->first();
-                $this->info('Processing league.'.$slug['slug']);
+                $this->info('Processing league.' . $slug['slug']);
                 $responseLeague = Http::get($endpoint);
-                if (isset($responseLeague)) {
+                if ($responseLeague->successful()) {
                     $league = $responseLeague->json();
                     $leagueNew = new League();
-                    $leagueNew->apiId = $league['id'];
-                    $leagueNew->uid = $league['uid'];
-                    $leagueNew->guid = isset($league['guid']) ? $league['guid'] : null;
-                    $leagueNew->ref = $league['$ref'];
-                    $leagueNew->name = $league['name'];
-                    $leagueNew->slug = $league['slug'];
-                    $leagueNew->midsizeName = isset($league['midsizeName']) ? $league['midsizeName'] : null;
-                    $leagueNew->alternateId = isset($league['alternateId']) ? $league['alternateId'] : null;
-                    $leagueNew->abbreviation = isset($league['abbreviation']) ?  $league['abbreviation'] : null;
-                    $leagueNew->shortName = isset($league['shortName']) ? $league['shortName'] : null;
-                    $leagueNew->isTournament = isset($league['isTournament']) ?  $league['isTournament'] : null; 
-                    $leagueNew->seasonsRef = isset( $league['seasons']['$ref']) ?  $league['seasons']['$ref'] : null; 
-                    $leagueNew->sport_id = $sport->id;
+                    $leagueNew->fill([
+                        'apiId' => $league['id'],
+                        'uid' => $league['uid'],
+                        'guid' => $league['guid'] ?? null,
+                        'ref' => $league['$ref'],
+                        'name' => $league['name'],
+                        'slug' => $league['slug'],
+                        'midsizeName' => $league['midsizeName'] ?? null,
+                        'alternateId' => $league['alternateId'] ?? null,
+                        'abbreviation' => $league['abbreviation'] ?? null,
+                        'shortName' => $league['shortName'] ?? null,
+                        'isTournament' => $league['isTournament'] ?? null,
+                        'seasonsRef' => $league['seasons']['$ref'] ?? null,
+                        'sport_id' => $sport->id,
+                    ]);
                     $leagueNew->save();
                 }
             }             
-           
-            $this->info('Leagues have been imported successfully.');
-        }else{
-
-            $this->info('All These leagues already exist in the current database.');
-
-        }
         
-       
+            $this->info('Leagues have been imported successfully.');
+        } else {
+            $this->info('All These leagues already exist in the current database.');
+        }
     }
 }

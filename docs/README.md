@@ -194,4 +194,26 @@
     - The queue:work --stop-when-empty command is called using the Artisan facade to process the jobs in the queue.
     Finally, a message is displayed indicating that the job imports have been done successfully.
 
+12.- ImportLeague Test
+
+    Summary
+    The code snippet is a test class called ImportLeagueTest that tests the functionality of importing a new sport and league using the ImportLeague command. It also tests the case when the sport and league already exist in the database.
+
+    Example Usage
+    php artisan test
+    
+    Inputs
+    sport_slug: The slug of the sport to import.
+    league_slug: The slug of the league to import.
+    
+    Flow
+    - The test fakes HTTP responses for the API endpoints related to the sport and league being imported.
+    - The test runs the import:league command with the specified sport and league slugs.
+    - The test expects certain output messages to be displayed during the import process.
+    - The test asserts that the expected data has been inserted into the sports and leagues tables in the database.
+    
+    Outputs
+    The test expects certain output messages to be displayed during the import process.
+    The test asserts that the expected data has been inserted into the sports and leagues tables in the database.
+
     

@@ -52,7 +52,7 @@ class ImportTeams extends Command
             $endpoint = config('endpoints.get.sportsSite').$sport->slug.'/'.$league->slug.'/teams';
             $responseLeagues = Http::get($endpoint);
         
-            if(isset($responseLeagues)){
+            if($responseLeagues->successful()){
                 $leagues = $responseLeagues->json();
             
                 if(isset($leagues['sports'])){

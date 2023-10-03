@@ -44,15 +44,15 @@ class ImportLeague extends Command
         $sportSlug = $arguments['sport_slug'];
         $leagueSlug = $arguments['league_slug'];
 
-        $endpoint = config('endpoints.get.sports').$sportSlug.'/leagues/'.$leagueSlug.config('endpoints.get.lang.en-us');
+        $endpoint = config('endpoints.get.sports') . $sportSlug . '/leagues/' . $leagueSlug . config('endpoints.get.lang.en-us');
         $this->info('Starting process...');
         $responseLeague = Http::get($endpoint);
 
-        if (isset($responseLeague)) {
-            $endpointSport = config('endpoints.get.sports').$sportSlug.config('endpoints.get.lang.en-us');
+        if ($responseLeague->successful()) {
+            $endpointSport = config('endpoints.get.sports') . $sportSlug . config('endpoints.get.lang.en-us');
             $responseSport = Http::get($endpointSport);
 
-            if(isset($responseSport)){
+            if ($responseSport->successful()) {
                 $sport = $responseSport->json();
                 $this->info('Processing Sport...');
                 $sport = Sport::firstOrCreate(
@@ -67,10 +67,10 @@ class ImportLeague extends Command
                     ]
                 );
 
-                if(!$sport->wasRecentlyCreated){
-                    $this->info('Sport ' .$sportSlug. ' already exists.');
-                }else{
-                    $this->info('Sport ' .$sportSlug. ' has been imported successfully.');
+                if (!$sport->wasRecentlyCreated) {
+                    $this->info('Sport ' . $sportSlug . ' already exists.');
+                } else {
+                    $this->info('Sport ' . $sportSlug . ' has been imported successfully.');
                 }
             }
 
@@ -89,15 +89,16 @@ class ImportLeague extends Command
                     'abbreviation' => $league['abbreviation'] ?? null,
                     'shortName' => $league['shortName'] ?? null,
                     'isTournament' => $league['isTournament'] ?? null,
+                    'seasonsRef' => $league['seasons']['$ref'] ?? null,
                     'sport_id' => $sport->id
                 ]
             );
 
-            if(!$league->wasRecentlyCreated){
-                $this->info('League ' .$leagueSlug. ' already exists.');
-            }else{
-                $this->info('League ' .$leagueSlug. ' has been imported successfully.');
+            if (!$league->wasRecentlyCreated) {
+                $this->info('League ' . $leagueSlug . ' already exists.');
+            } else {
+                $this->info('League ' . $leagueSlug . ' has been imported successfully.');
             }
-        }   
+        }
     }
 }
