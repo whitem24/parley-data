@@ -10,7 +10,7 @@
 <h3><strong>Uso</strong></h3>
 <h5><strong>Básico</strong></h5>
 
-1. Para realizar importaciones en lote ejecutar comando php artisan dispatch:imports
+1. Para realizar importaciones en lote basado en el archivo excel proporcionado, ejecutar comando: php artisan dispatch:imports
 
 Para más información consultar archivo de la carpeta /docs que se encuentra en la raiz del proyecto
 
